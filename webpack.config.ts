@@ -34,13 +34,36 @@ const config: Configuration = {
   },
   module: {
     rules: [
+      // {
+      //   test: /\.[jt]sx?$/,
+      //   exclude: /node_modules/,
+      //   loader: 'babel-loader',
+      //   options: {
+      //     plugins: [isDevelopment && 'react-refresh/babel'].filter(Boolean),
+      //   },
+      // },
       {
-        test: /\.(js|jsx|ts|tsx)$/,
-        exclude: [/node_modules/],
-        loader: 'babel-loader',
-        options: {
-          plugins: [isDevelopment && 'react-refresh/babel'].filter(Boolean),
-        },
+        test: /\.[jt]sx?$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'swc-loader',
+            options: {
+              jsc: {
+                transform: {
+                  react: {
+                    pragma: 'React.createElement',
+                    pragmaFrag: 'React.Fragment',
+                    throwIfNamespace: true,
+                    development: isDevelopment,
+                    refresh: isDevelopment,
+                    runtime: 'automatic',
+                  },
+                },
+              },
+            },
+          },
+        ],
       },
     ],
   },
@@ -52,6 +75,7 @@ const config: Configuration = {
     }),
     (isDevelopment && new ReactRefreshWebpackPlugin()) as any,
   ].filter(Boolean),
+
   optimization: {
     chunkIds: 'named',
     splitChunks: {
