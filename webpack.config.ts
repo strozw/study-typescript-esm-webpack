@@ -50,8 +50,8 @@ const config: Configuration = {
       inject: 'body',
       scriptLoading: 'module',
     }),
-    new ReactRefreshWebpackPlugin(),
-  ],
+    (isDevelopment && new ReactRefreshWebpackPlugin()) as any,
+  ].filter(Boolean),
   optimization: {
     chunkIds: 'named',
     splitChunks: {
