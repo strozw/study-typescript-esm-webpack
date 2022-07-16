@@ -12,26 +12,33 @@ const isDevelopment = process.env.NODE_ENV === 'development'
 
 const config: Configuration = {
   experiments: {
-    lazyCompilation: {
-      imports: true,
-      entries: false,
-    },
+    lazyCompilation: isDevelopment
+      ? {
+          imports: true,
+          entries: false,
+        }
+      : false,
     outputModule: true,
     topLevelAwait: true,
   },
+
   entry: {
     main: './src/index.tsx',
   },
+
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, './dist'),
   },
+
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
   },
+
   devServer: {
     hot: true,
   },
+
   module: {
     rules: [
       // {
@@ -67,6 +74,7 @@ const config: Configuration = {
       },
     ],
   },
+
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/index.html',
