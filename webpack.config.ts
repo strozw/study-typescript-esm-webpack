@@ -1,7 +1,7 @@
 import url from 'node:url'
 import path from 'node:path'
 
-import { Configuration, ModuleOptions, RuleSetRule } from 'webpack'
+import { Configuration } from 'webpack'
 import 'webpack-dev-server'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin'
