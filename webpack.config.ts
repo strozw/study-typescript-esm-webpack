@@ -1,8 +1,9 @@
+/// <reference path="node_modules/webpack-dev-server/types/lib/Server.d.ts"/>
+
 import url from 'node:url'
 import path from 'node:path'
 
 import { Configuration } from 'webpack'
-import 'webpack-dev-server'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin'
 
@@ -40,10 +41,6 @@ const config: (env: { loader: 'babel' | 'swc' }) => Configuration = env => {
       hot: true,
     },
 
-    // cache: {
-    //   type: 'memory',
-    // },
-
     module: {
       rules: [
         env.loader === 'swc'
@@ -80,6 +77,18 @@ const config: (env: { loader: 'babel' | 'swc' }) => Configuration = env => {
       ],
     },
 
+    // cache: {
+    //   type: 'filesystem',
+    // },
+
+    optimization: {
+      chunkIds: 'named',
+      runtimeChunk: isDevelopment,
+      splitChunks: {
+        chunks: 'all',
+      },
+    },
+
     plugins: [
       new HtmlWebpackPlugin({
         template: './src/index.html',
@@ -88,13 +97,6 @@ const config: (env: { loader: 'babel' | 'swc' }) => Configuration = env => {
       }),
       (isDevelopment && new ReactRefreshWebpackPlugin()) as any,
     ].filter(Boolean),
-
-    optimization: {
-      chunkIds: 'named',
-      splitChunks: {
-        chunks: 'all',
-      },
-    },
   }
 }
 
