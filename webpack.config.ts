@@ -7,7 +7,9 @@ import { Configuration } from 'webpack'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin'
 
-const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
+const __filename = url.fileURLToPath(import.meta.url)
+
+const __dirname = path.dirname(__filename)
 
 const isDevelopment = process.env.NODE_ENV === 'development'
 
@@ -15,10 +17,7 @@ const config: (env: { loader: 'babel' | 'swc' }) => Configuration = env => {
   return {
     experiments: {
       lazyCompilation: isDevelopment
-        ? {
-            imports: true,
-            entries: false,
-          }
+        ? { imports: true, entries: false }
         : false,
       outputModule: true,
       topLevelAwait: true,
@@ -45,41 +44,45 @@ const config: (env: { loader: 'babel' | 'swc' }) => Configuration = env => {
       rules: [
         env.loader === 'swc'
           ? {
-              test: /\.[jt]sx?$/,
-              exclude: /node_modules/,
-              use: [
-                {
-                  loader: 'swc-loader',
-                  options: {
-                    jsc: {
-                      transform: {
-                        react: {
-                          development: isDevelopment,
-                          refresh: isDevelopment,
-                          runtime: 'automatic',
-                        },
+            test: /\.[jt]sx?$/,
+            exclude: /node_modules/,
+            use: [
+              {
+                loader: 'swc-loader',
+                options: {
+                  jsc: {
+                    transform: {
+                      react: {
+                        development: isDevelopment,
+                        refresh: isDevelopment,
+                        runtime: 'automatic',
                       },
                     },
                   },
                 },
-              ],
-            }
-          : {
-              test: /\.[jt]sx?$/,
-              exclude: /node_modules/,
-              loader: 'babel-loader',
-              options: {
-                plugins: [isDevelopment && 'react-refresh/babel'].filter(
-                  Boolean
-                ),
               },
+            ],
+          }
+          : {
+            test: /\.[jt]sx?$/,
+            exclude: /node_modules/,
+            loader: 'babel-loader',
+            options: {
+              cacheDirectory: true,
+              plugins: [isDevelopment && 'react-refresh/babel'].filter(
+                Boolean
+              ),
             },
+          },
       ],
     },
 
-    // cache: {
-    //   type: 'filesystem',
-    // },
+    cache: {
+      type: 'filesystem',
+      buildDependencies: {
+        config: [__filename],
+      },
+    },
 
     optimization: {
       chunkIds: 'named',
